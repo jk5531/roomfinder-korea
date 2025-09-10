@@ -1,8 +1,9 @@
-import "./globals.css";
+import './globals.css';
+import type { Metadata } from 'next';
 
-export const metadata = {
-  title: "Roomfinder Korea",
-  description: "Find low deposit rooms in Korea"
+export const metadata: Metadata = {
+  title: 'Roomfinder Korea',
+  description: 'Admin + Landing',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
