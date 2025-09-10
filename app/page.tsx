@@ -1,3 +1,5 @@
+"use client";
+
 // app/page.tsx
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
