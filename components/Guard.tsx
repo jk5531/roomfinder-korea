@@ -1,26 +1,33 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+// components/Guard.tsx
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 export default function Guard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [ok, setOk] = useState<boolean | null>(null);
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    const run = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return router.replace('/admin/login');
-      const email = user.email ?? '';
-      const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-      if (adminEmail && email.toLowerCase() !== adminEmail.toLowerCase()) {
-        return router.replace('/admin/login');
+    async function run() {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        router.replace("/admin/login");
+      } else {
+        setChecking(false);
       }
-      setOk(true);
-    };
+    }
     run();
   }, [router]);
 
-  if (ok === null) return <div className="container py-20">Loading…</div>;
+  if (checking) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center text-gray-600">
+        Checking session...
+      </div>
+    );
+  }
+
   return <>{children}</>;
 }
