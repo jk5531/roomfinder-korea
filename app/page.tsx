@@ -18,7 +18,7 @@ import {
 const sampleListings = [
   {
     id: "L-101",
-    title_ko: "신림역 도보 3분 · 레지던스 채움",
+    title_ko: "신림 도보 3분 · 레지던스 채움",
     title_en: "3min to Sillim Station · Luen Residence",
     district: "관악구",
     city: "Seoul",
