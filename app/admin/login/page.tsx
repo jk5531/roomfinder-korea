@@ -1,37 +1,78 @@
-'use client';
-import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
-import { useRouter } from 'next/navigation';
+// app/admin/login/page.tsx
+"use client";
 
-export default function AdminLogin() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [err, setErr] = useState<string | null>(null);
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
+
+export default function AdminLoginPage() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [pw, setPw] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
-  const onSubmit = async (e: React.FormEvent) => {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) { setErr(error.message); return; }
-    router.replace('/admin');
-  };
+    setLoading(true);
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password: pw,
+    });
+    setLoading(false);
+    if (error) {
+      setErr(error.message);
+      return;
+    }
+    if (data.session) {
+      router.replace("/admin");
+    }
+  }
 
   return (
-    <main className="container py-16 max-w-md">
-      <h1 className="text-2xl font-bold mb-6">관리자 로그인</h1>
-      <form onSubmit={onSubmit} className="space-y-4 card p-6">
-        <div>
-          <label className="label">이메일</label>
-          <input className="input" type="email" value={email} onChange={e=>setEmail(e.target.value)} required />
-        </div>
-        <div>
-          <label className="label">비밀번호</label>
-          <input className="input" type="password" value={password} onChange={e=>setPassword(e.target.value)} required />
-        </div>
-        {err && <p className="text-red-600 text-sm">{err}</p>}
-        <button className="btn" type="submit">로그인</button>
-      </form>
-    </main>
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="w-full max-w-md border rounded-2xl p-6 space-y-4">
+        <h1 className="text-2xl font-semibold text-center">Admin Login</h1>
+
+        <form onSubmit={onSubmit} className="space-y-3">
+          <div className="space-y-1">
+            <label className="text-sm">Email</label>
+            <input
+              className="w-full border rounded-lg p-2"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm">Password</label>
+            <input
+              className="w-full border rounded-lg p-2"
+              type="password"
+              placeholder="••••••••"
+              value={pw}
+              onChange={(e) => setPw(e.target.value)}
+              required
+              autoComplete="current-password"
+            />
+          </div>
+
+          {err && <p className="text-sm text-red-600">{err}</p>}
+
+          <button
+            className="w-full rounded-lg p-2 border bg-black text-white disabled:opacity-50"
+            disabled={loading}
+            type="submit"
+          >
+            {loading ? "Signing in..." : "Sign in"}
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
