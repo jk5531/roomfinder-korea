@@ -13,6 +13,7 @@ import {
   Globe2,
   ChevronRight,
 } from "lucide-react";
+import Link from "next/link";
 
 // ✅ 샘플 매물 데이터
 const sampleListings = [
@@ -235,12 +236,13 @@ export default function Page() {
             >
               {t("aboutGoshiwon")}
             </a>
-            <a
-              href="/admin/login"
-              className="px-3 py-2 rounded-xl border text-sm hover:bg-slate-50"
-            >
-              Admin Login
-            </a>
+           <Link
+  href="/admin/login"
+  className="px-3 py-2 rounded-xl border text-sm hover:bg-slate-50"
+>
+  Admin Login
+</Link>
+
           </div>
         </div>
       </header>
