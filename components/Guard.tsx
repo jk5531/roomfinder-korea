@@ -1,3 +1,4 @@
+// components/Guard.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,29 +8,19 @@ import { supabase } from "@/lib/supabase";
 export default function Guard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [checking, setChecking] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // ✅ 현재 세션 확인
-    supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) {
-        router.replace("/admin/login");
+    async function run() {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        setIsLoggedIn(true);
       } else {
-        setChecking(false);
-      }
-    });
-
-    // ✅ 로그인/로그아웃 이벤트 감지
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
         router.replace("/admin/login");
-      } else {
-        setChecking(false);
       }
-    });
-
-    return () => subscription.unsubscribe();
+      setChecking(false);
+    }
+    run();
   }, [router]);
 
   if (checking) {
@@ -40,6 +31,11 @@ export default function Guard({ children }: { children: React.ReactNode }) {
     );
   }
 
+  if (!isLoggedIn) {
+    return null; // 로그인 안됐을 땐 아무것도 안 보여줌
+  }
+
   return <>{children}</>;
 }
+
 
